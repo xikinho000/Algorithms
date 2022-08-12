@@ -1,41 +1,59 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void swap( int v[], int i, int j )
-{
-    int temp = v[i];
-    v[i] = v[j];
-    v[j] = temp;
-}
+// Macro for array size
+#define ArrSize(arr) sizeof(arr)/sizeof(arr[0])
 
-int cmp(int x, int y){
+void swap(int arr[], int a, int b)
+{
+    int temp = arr[a];
+    arr[a] = arr[b];
+    arr[b] = temp;
+};
+
+int cmp(int x, int y)
+{
     return x < y;
+};
+
+int partition(int arr[], int low, int high)
+{
+    int lowIndex = low;
+    int highIndex = high + 1;
+    while(1){
+        while(cmp(arr[++lowIndex], arr[low]))
+            if(lowIndex == high) break;
+        
+        while(cmp(arr[low], arr[--highIndex]))
+            if(highIndex == low) break;
+        
+        if(lowIndex >= highIndex)
+            break;
+        swap(arr, lowIndex, highIndex);
+    }
+    swap(arr, low, highIndex);
+    return highIndex;
+};
+
+void quicksort(int arr[], int low, int high)
+{
+    if(low>=high) return;
+    int pivot = partition(arr, low, high);
+    quicksort(arr, low, pivot - 1);
+    quicksort(arr, pivot + 1, high);
+};
+
+void print(int data[], int s)
+{
+    printf("Printing sorted array of %d element(s). \n", s);
+    for(int i=0; i<s; i++)
+        printf("%d - ", data[i]);
 }
 
-void quicksort1( int v[], int n )
+int main()
 {
-    int i, last;
-    if( n <= 1 ) return;
-
-    swap(v, 0, rand() % n );
-    last = 0;
-    for( i=1; i<n; ++i ) // n
-        if( cmp( v[i], v[0] ) ) // 1
-            swap( v, ++last, i ); // 1
-    swap( v, 0, last ); // 1
-    last = 0; // 1
-    quicksort1( v, last );
-    quicksort1( v+last+1, n-last-1 );
-} 
-
-int main( void )
-{
-    int arr[] = {  25, 2 , 4 , 1, 10, 9 };
-    int i, j;
-    size_t size = sizeof( arr ) / sizeof( int );
-
-    quicksort1( arr, size );
-    for ( i=0; i<size; i++ ){
-        printf(" %d ", arr[i] );
-    }
+    int data [] = {55, 44, 33, 110, 100, 101, 46};
+    quicksort(data, 0 , ArrSize(data));
+    print(data, ArrSize(data));
+    return 1;
 }
